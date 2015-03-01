@@ -154,13 +154,16 @@ namespace WebApi.Hal
             }
 
             //Third write out the links of the resource
-            var links = new HashSet<Link>(representation.Links.Where(link => link.Rel != "self"), Link.EqualityComparer);
-            foreach (var link in links)
+            if (representation.Links != null)
             {
-                writer.WriteStartElement("link");
-                writer.WriteAttributeString("rel", link.Rel);
-                writer.WriteAttributeString("href", link.Href);
-                writer.WriteEndElement();
+                var links = new HashSet<Link>(representation.Links.Where(link => link.Rel != "self"), Link.EqualityComparer);
+                foreach (var link in links)
+                {
+                    writer.WriteStartElement("link");
+                    writer.WriteAttributeString("rel", link.Rel);
+                    writer.WriteAttributeString("href", link.Href);
+                    writer.WriteEndElement();
+                }
             }
 
             // Fourth, write the rest of the properties

@@ -19,7 +19,7 @@ namespace WebApi.Hal.Web.Api.Resources
 
         protected override void CreateHypermedia()
         {
-            Links.Add(LinkTemplates.BeerStyles.AssociatedBeers.CreateLink(new {id = Id}));
+            AddLink(LinkTemplates.BeerStyles.AssociatedBeers.CreateLink(new {id = Id}));
         }
     }
 }

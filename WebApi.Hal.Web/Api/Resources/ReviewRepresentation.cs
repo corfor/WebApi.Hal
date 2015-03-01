@@ -21,7 +21,7 @@
 
         protected override void CreateHypermedia()
         {
-            Links.Add(LinkTemplates.Beers.Beer.CreateLink(new {id = Beer_Id}));
+            AddLink(LinkTemplates.Beers.Beer.CreateLink(new {id = Beer_Id}));
         }
     }
 }

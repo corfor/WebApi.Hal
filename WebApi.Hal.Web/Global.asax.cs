@@ -43,12 +43,12 @@ namespace WebApi.Hal.Web
             containerBuilder
                 .Register(c=> new BeerDbContext(connectionString))
                 .As<IBeerDbContext>()
-                .InstancePerApiRequest();
+                .InstancePerRequest();
 
             containerBuilder
                 .RegisterType<BeerRepository>()
                 .As<IRepository>()
-                .InstancePerApiRequest();
+                .InstancePerRequest();
         }
     }
 }

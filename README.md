@@ -92,9 +92,9 @@ Here is an example of the Beer CreateHypermedia override (from the example proje
 		Href = LinkTemplates.Beers.Beer.CreateLink(new { id = Id }).Href;
 
 		if (StyleId != null)
-			Links.Add(LinkTemplates.BeerStyles.Style.CreateLink(new { id = StyleId }));
+			AddLink(LinkTemplates.BeerStyles.Style.CreateLink(new { id = StyleId }));
 		if (BreweryId != null)
-			Links.Add(LinkTemplates.Breweries.Brewery.CreateLink(new { id = BreweryId }));
+			AddLink(LinkTemplates.Breweries.Brewery.CreateLink(new { id = BreweryId }));
 	}
 
 Sample controller action

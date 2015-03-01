@@ -123,7 +123,7 @@
 
         protected override void CreateHypermedia()
         {
-            Links.Add(new Link("someRel", "someHref", "someTitle"));
+            AddLink(new Link("someRel", "someHref", "someTitle"));
         }
     }
 }

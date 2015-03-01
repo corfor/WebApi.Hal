@@ -83,29 +83,31 @@ namespace WebApi.Hal.JsonConverters
             {
                 foreach (var rel in links.OfType<JProperty>())
                     CreateLinks(rel, resource);
-                var self = resource.Links.SingleOrDefault(l => l.Rel == "self");
-                if (self != null)
-                    resource.Href = self.Href;
+                if (resource.Links != null)
+                {
+                    var self = resource.Links.SingleOrDefault(l => l.Rel == "self");
+                    if (self != null)
+                        resource.Href = self.Href;
+                }
             }
 
             // embedded are named properties, where the name is the Rel, which needs to map to a Resource Type, and the value is the Resource
             // recursive
-            if (embeddeds != null)
+            if (embeddeds == null) return resource;
+
+            foreach (var prop in resourceType.GetProperties().Where(p => Representation.IsEmbeddedResourceType(p.PropertyType)))
             {
-                foreach (var prop in resourceType.GetProperties().Where(p => Representation.IsEmbeddedResourceType(p.PropertyType)))
+                // expects embedded collection of resources is implemented as an IList on the Representation-derived class
+                var lst = prop.GetValue(resource) as IList;
+                if (lst != null)
                 {
-                    // expects embedded collection of resources is implemented as an IList on the Representation-derived class
-                    var lst = prop.GetValue(resource) as IList;
-                    if (lst != null)
-                    {
-                        if (prop.PropertyType.GenericTypeArguments != null &&
-                            prop.PropertyType.GenericTypeArguments.Length > 0)
-                            CreateEmbedded(embeddeds, prop.PropertyType.GenericTypeArguments[0],
-                                newRes => lst.Add(newRes));
-                    }
-                    else
-                        CreateEmbedded(embeddeds, prop.PropertyType, newRes => prop.SetValue(resource, newRes));
+                    if (prop.PropertyType.GenericTypeArguments != null &&
+                        prop.PropertyType.GenericTypeArguments.Length > 0)
+                        CreateEmbedded(embeddeds, prop.PropertyType.GenericTypeArguments[0],
+                            newRes => lst.Add(newRes));
                 }
+                else
+                    CreateEmbedded(embeddeds, prop.PropertyType, newRes => prop.SetValue(resource, newRes));
             }
 
             return resource;
@@ -116,50 +118,44 @@ namespace WebApi.Hal.JsonConverters
             if (rel.Value.Type == JTokenType.Array)
             {
                 var arr = rel.Value as JArray;
-                if (arr != null)
-                    foreach (var link in arr.Select(item => item.ToObject<Link>()))
-                    {
-                        link.Rel = rel.Name;
-                        resource.Links.Add(link);
-                    }
+                if (arr == null) return;
+                foreach (var link in arr.Select(item => item.ToObject<Link>()))
+                {
+                    link.Rel = rel.Name;
+                    resource.AddLink(link);
+                }
             }
             else
             {
                 var link = rel.Value.ToObject<Link>();
                 link.Rel = rel.Name;
-                resource.Links.Add(link);
+                resource.AddLink(link);
             }
         }
 
         static void CreateEmbedded(JToken embeddeds, Type resourceType, Action<IResource> addCreatedResource)
         {
             var rel = GetResourceTypeRel(resourceType);
-            if (!string.IsNullOrEmpty(rel))
+            if (string.IsNullOrEmpty(rel)) return;
+            var tok = embeddeds[rel];
+            if (tok == null) return;
+            switch (tok.Type)
             {
-                var tok = embeddeds[rel];
-                if (tok != null)
+                case JTokenType.Array:
                 {
-                    switch (tok.Type)
-                    {
-                        case JTokenType.Array:
-                            {
-                                var embeddedJArr = tok as JArray;
-                                if (embeddedJArr != null)
-                                {
-                                    foreach (var embeddedJObj in embeddedJArr.OfType<JObject>())
-                                        addCreatedResource(CreateResource(embeddedJObj, resourceType)); // recursion
-                                }
-                            }
-                            break;
-                        case JTokenType.Object:
-                            {
-                                var embeddedJObj = tok as JObject;
-                                if (embeddedJObj != null)
-                                    addCreatedResource(CreateResource(embeddedJObj, resourceType)); // recursion
-                            }
-                            break;
-                    }
+                    var embeddedJArr = tok as JArray;
+                    if (embeddedJArr != null)
+                        foreach (var embeddedJObj in embeddedJArr.OfType<JObject>())
+                            addCreatedResource(CreateResource(embeddedJObj, resourceType)); // recursion
                 }
+                    break;
+                case JTokenType.Object:
+                {
+                    var embeddedJObj = tok as JObject;
+                    if (embeddedJObj != null)
+                        addCreatedResource(CreateResource(embeddedJObj, resourceType)); // recursion
+                }
+                    break;
             }
         }
 

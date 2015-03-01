@@ -12,7 +12,6 @@ namespace WebApi.Hal
         readonly ResourceConverter resourceConverter = new ResourceConverter();
         readonly LinksConverter linksConverter = new LinksConverter();
         readonly EmbeddedResourceConverter embeddedResourceConverter = new EmbeddedResourceConverter();
-        readonly IHypermediaResolver hypermediaConfiguration;
 
         public JsonHalMediaTypeFormatter(IHypermediaResolver hypermediaConfiguration)
         {

@@ -14,7 +14,9 @@ namespace WebApi.Hal.Interfaces
         [JsonIgnore]
         string LinkName { get; set; }
 
-        [JsonProperty("_links")]
+        [JsonProperty("_links", DefaultValueHandling = DefaultValueHandling.Ignore)]
         IList<Link> Links { get; set; }
+
+        void AddLink(Link link);
     }
 }

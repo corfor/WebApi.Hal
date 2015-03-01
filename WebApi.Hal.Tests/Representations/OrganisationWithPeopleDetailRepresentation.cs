@@ -92,9 +92,9 @@ namespace WebApi.Hal.Tests.Representations
                 Rel = "people",
                 Href = string.Format("/api/organisations/{0}/people", Id)
             };
-            Links.Add(l);
+            AddLink(l);
             // intentionally add a duplicate to make sure it gets screened out
-            Links.Add(l);
+            AddLink(l);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 
 namespace WebApi.Hal.Web.Api.Resources
@@ -32,13 +33,14 @@ namespace WebApi.Hal.Web.Api.Resources
         protected override void CreateHypermedia()
         {
             if (StyleId != null)
-                Links.Add(LinkTemplates.BeerStyles.Style.CreateLink(new { id = StyleId }));
+                AddLink(LinkTemplates.BeerStyles.Style.CreateLink(new { id = StyleId }));
             if (BreweryId != null)
-                Links.Add(LinkTemplates.Breweries.Brewery.CreateLink(new { id = BreweryId }));
+                AddLink(LinkTemplates.Breweries.Brewery.CreateLink(new { id = BreweryId }));
 
-            if (ReviewIds != null && ReviewIds.Count > 0)
-                foreach (var rid in ReviewIds)
-                    Links.Add(LinkTemplates.Reviews.GetBeerReview.CreateLink(new {id = Id, rid}));
+            if (ReviewIds == null || !ReviewIds.Any() ) return;
+
+            foreach (var rid in ReviewIds)
+                AddLink(LinkTemplates.Reviews.GetBeerReview.CreateLink(new { id = Id, rid }));
         }
     }
 }

@@ -17,7 +17,7 @@ namespace WebApi.Hal.Web.Api.Resources
             base.CreateHypermedia();
             var search = LinkTemplates.Beers.SearchBeers;
             if (Links.Count(l=>l.Rel == search.Rel && l.Href == search.Href) == 0)
-                Links.Add(LinkTemplates.Beers.SearchBeers);
+                AddLink(LinkTemplates.Beers.SearchBeers);
         }
     }
 }

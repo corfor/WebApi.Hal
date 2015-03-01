@@ -29,17 +29,17 @@ namespace WebApi.Hal.Tests.Representations
 
         protected override void CreateHypermedia()
         {
-            Links.Add(new Link
+            AddLink(new Link
             {
                 Rel = "people",
                 Href = string.Format("/api/organisations/{0}/people", Id)
             });
-            Links.Add(new Link
+            AddLink(new Link
             {
                 Rel = "brownnoser",
                 Href = string.Format("/api/organisations/{0}/brown/1", Id)
             });
-            Links.Add(new Link
+            AddLink(new Link
             {
                 Rel = "brownnoser",
                 Href = string.Format("/api/organisations/{0}/brown/2", Id)

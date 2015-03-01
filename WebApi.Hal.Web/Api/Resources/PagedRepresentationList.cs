@@ -30,23 +30,23 @@ namespace WebApi.Hal.Web.Api.Resources
 
             Href = Href ?? uriTemplate.CreateLink(prms.ToArray()).Href;
 
-            Links.Add(new Link { Href = Href, Rel = "self" });
+            AddLink(new Link { Href = Href, Rel = "self" });
 
             if (Page > 1)
             {
                 var item = UriTemplateSubstitutionParams == null
                                 ? uriTemplate.CreateLink("prev", new { page = Page - 1 })
                                 : uriTemplate.CreateLink("prev", UriTemplateSubstitutionParams, new { page = Page - 1 }); // page overrides UriTemplateSubstitutionParams
-                Links.Add(item);
+                AddLink(item);
             } 
             if (Page < TotalPages)
             {
                 var link = UriTemplateSubstitutionParams == null // kbr
                                ? uriTemplate.CreateLink("next", new { page = Page + 1 })
                                : uriTemplate.CreateLink("next", UriTemplateSubstitutionParams, new { page = Page + 1 }); // page overrides UriTemplateSubstitutionParams
-                Links.Add(link);
+                AddLink(link);
             }
-            Links.Add(new Link("page", uriTemplate.Href));
+            AddLink(new Link("page", uriTemplate.Href));
         }
     }
 }

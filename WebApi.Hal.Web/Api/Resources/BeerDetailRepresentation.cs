@@ -31,12 +31,12 @@ namespace WebApi.Hal.Web.Api.Resources
         protected override void CreateHypermedia()
         {
             if (Style != null)
-                Links.Add(LinkTemplates.BeerStyles.Style.CreateLink(new { id = Style.Id }));
+                AddLink(LinkTemplates.BeerStyles.Style.CreateLink(new { id = Style.Id }));
             if (Brewery != null)
-                Links.Add(LinkTemplates.Breweries.Brewery.CreateLink(new { id = Brewery.Id }));
-            if (Reviews != null)
-                foreach (var rev in Reviews)
-                    Links.Add(LinkTemplates.Reviews.GetBeerReview.CreateLink(new { id = rev.Beer_Id, rid = rev.Id }));
+                AddLink(LinkTemplates.Breweries.Brewery.CreateLink(new { id = Brewery.Id }));
+            if (Reviews == null) return;
+            foreach (var rev in Reviews)
+                AddLink(LinkTemplates.Reviews.GetBeerReview.CreateLink(new { id = rev.Beer_Id, rid = rev.Id }));
         }
     }
 }

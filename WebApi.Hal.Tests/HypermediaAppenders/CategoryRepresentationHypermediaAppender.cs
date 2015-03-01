@@ -13,10 +13,10 @@ namespace WebApi.Hal.Tests.HypermediaAppenders
                 switch (link.Rel)
                 {
                     case Link.RelForSelf:
-                        resource.Links.Add(link.CreateLink(new { id = resource.Id }));
+                        resource.AddLink(link.CreateLink(new { id = resource.Id }));
                         break;
                     default:
-                        resource.Links.Add(link); // append untouched ...
+                        resource.AddLink(link); // append untouched ...
                         break;
                 }
             }
