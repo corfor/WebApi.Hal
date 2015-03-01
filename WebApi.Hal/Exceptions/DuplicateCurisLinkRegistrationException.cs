@@ -2,6 +2,7 @@ using System;
 
 namespace WebApi.Hal.Exceptions
 {
+    [Serializable]
     public class DuplicateCurisLinkRegistrationException : Exception
     {
         public DuplicateCurisLinkRegistrationException(string name)

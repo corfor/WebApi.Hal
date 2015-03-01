@@ -2,6 +2,7 @@ using System;
 
 namespace WebApi.Hal.Exceptions
 {
+    [Serializable]
     public class DuplicateHypermediaResolverRegistrationException : Exception
     {
         public DuplicateHypermediaResolverRegistrationException(Type type)
