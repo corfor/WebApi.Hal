@@ -106,6 +106,8 @@
     <Compile Include="Api\Resources\BreweryRepresentation.cs" />
     <Compile Include="Api\Resources\PagedRepresentationList.cs" />
     <Compile Include="Api\Resources\ReviewRepresentation.cs" />
+    <Compile Include="Api\RootController.cs" />
+    <Compile Include="Api\Resources\RootRepresentation.cs" />
     <Compile Include="Api\StylesController.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Api\Resources\BeerListRepresentation.cs" />

@@ -2,6 +2,11 @@
 {
     public static class LinkTemplates
     {
+        public static class Root
+        {
+            public static Link Self { get { return new Link("root", "~/"); } }
+        }
+
         public static class Breweries
         {
             /// <summary>

@@ -1,5 +1,7 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 using System.Data.Entity;
+using System.Linq;
 using System.Reflection;
 using System.Web.Http;
 using Autofac;
@@ -17,12 +19,15 @@ namespace WebApi.Hal.Web
 
         protected void Application_Start()
         {
-            connectionString = ConfigurationManager.AppSettings["BeerDatabase"];
+            connectionString = ConfigurationManager.ConnectionStrings["BeerDatabase"].ConnectionString;
 
             RouteConfig.RegisterRoutes(GlobalConfiguration.Configuration.Routes);
 
             GlobalConfiguration.Configuration.Formatters.Add(new JsonHalMediaTypeFormatter());
             GlobalConfiguration.Configuration.Formatters.Add(new XmlHalMediaTypeFormatter());
+            var xmlFormatter =
+                GlobalConfiguration.Configuration.Formatters.FirstOrDefault(f => f.SupportedMediaTypes.Any(m => string.Equals(m.MediaType, "application/xml", StringComparison.OrdinalIgnoreCase)));
+            if (xmlFormatter != null) GlobalConfiguration.Configuration.Formatters.Remove(xmlFormatter);
 
             var containerBuilder = new ContainerBuilder();
 
