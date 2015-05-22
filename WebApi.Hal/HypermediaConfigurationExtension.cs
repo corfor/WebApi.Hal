@@ -7,7 +7,8 @@ namespace WebApi.Hal
 {
     public static class HypermediaConfigurationExtension
     {
-        public static void Register<T>(this IHypermediaBuilder builder, Link<T> selfLink, IHypermediaAppender<T> appender, params Link[] links) where T : class, IResource
+        public static void Register<T>(this IHypermediaBuilder builder, Link<T> selfLink, IHypermediaAppender<T> appender, params Link[] links)
+            where T : class, IResource
         {
             if (selfLink == null)
                 throw new ArgumentNullException("selfLink");
@@ -20,7 +21,8 @@ namespace WebApi.Hal
             builder.RegisterLinks<T>(links);
         }
 
-        public static void Register<T>(this IHypermediaBuilder builder, Link<T> selfLink, Action<T, IEnumerable<Link>> appender, params Link[] links) where T : class, IResource
+        public static void Register<T>(this IHypermediaBuilder builder, Link<T> selfLink, Action<T, IEnumerable<Link>> appender, params Link[] links)
+            where T : class, IResource
         {
             if (selfLink == null)
                 throw new ArgumentNullException("selfLink");
@@ -41,10 +43,7 @@ namespace WebApi.Hal
             builder.RegisterSelf(selfLink);
             builder.RegisterLinks<T>(links);
             builder.RegisterAppender(new ActionBasedHypermediaAppender<T>(
-                (resource, configured) =>
-                {
-                    resource.Links = configured.ToList();
-                }));
+                (resource, configured) => { resource.Links = configured.ToList(); }));
         }
     }
 }

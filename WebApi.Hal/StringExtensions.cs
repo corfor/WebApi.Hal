@@ -9,8 +9,8 @@ namespace WebApi.Hal
         {
             var sb = new StringBuilder();
 
-            int previousIndex = 0;
-            int index = str.IndexOf(oldValue, comparison);
+            var previousIndex = 0;
+            var index = str.IndexOf(oldValue, comparison);
             while (index != -1)
             {
                 sb.Append(str.Substring(previousIndex, index - previousIndex));
@@ -23,6 +23,6 @@ namespace WebApi.Hal
             sb.Append(str.Substring(previousIndex));
 
             return sb.ToString();
-        } 
+        }
     }
 }

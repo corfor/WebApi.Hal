@@ -8,17 +8,12 @@ namespace WebApi.Hal
 {
     public class Hypermedia : IHypermediaResolver, IHypermediaBuilder
     {
-        readonly IDictionary<Type, Link> selfLinks = new Dictionary<Type, Link>();
-        readonly IDictionary<Type, IList<Link>> hypermedia = new Dictionary<Type, IList<Link>>();
         readonly IDictionary<Type, object> appenders = new Dictionary<Type, object>();
+        readonly IDictionary<Type, IList<Link>> hypermedia = new Dictionary<Type, IList<Link>>();
+        readonly IDictionary<Type, Link> selfLinks = new Dictionary<Type, Link>();
 
         Hypermedia()
         {
-        }
-
-        public static IHypermediaBuilder CreateBuilder()
-        {
-            return new Hypermedia();
         }
 
         public void RegisterAppender<T>(IHypermediaAppender<T> appender) where T : class, IResource
@@ -26,7 +21,7 @@ namespace WebApi.Hal
             if (appender == null)
                 throw new ArgumentNullException("appender");
 
-            var type = typeof(T);
+            var type = typeof (T);
 
             if (appenders.ContainsKey(type))
                 throw new DuplicateHypermediaResolverRegistrationException(type);
@@ -39,7 +34,7 @@ namespace WebApi.Hal
             if (link == null)
                 throw new ArgumentNullException("link");
 
-            var type = typeof(T);
+            var type = typeof (T);
 
             if (selfLinks.ContainsKey(type))
                 throw new DuplicateSelfLinkRegistrationException(type);
@@ -52,7 +47,7 @@ namespace WebApi.Hal
             if (link == null)
                 throw new ArgumentNullException("link");
 
-            var type = typeof(T);
+            var type = typeof (T);
 
             if (selfLinks.ContainsKey(type))
                 throw new DuplicateSelfLinkRegistrationException(type);
@@ -65,7 +60,7 @@ namespace WebApi.Hal
             if (links == null)
                 throw new ArgumentNullException("links");
 
-            var type = typeof(T);
+            var type = typeof (T);
 
             if (hypermedia.ContainsKey(type))
                 hypermedia[type] = hypermedia[type].Union(links).Distinct(Link.EqualityComparer).ToList();
@@ -78,20 +73,20 @@ namespace WebApi.Hal
             return this;
         }
 
-        public IHypermediaAppender<T> ResolveAppender<T>(T resource) where T: class, IResource
+        public IHypermediaAppender<T> ResolveAppender<T>(T resource) where T : class, IResource
         {
             var type = resource.GetType();
 
-            if (!appenders.ContainsKey(type)) 
+            if (!appenders.ContainsKey(type))
                 return null;
-            
+
             return (IHypermediaAppender<T>) appenders[type];
         }
 
         public IEnumerable<Link> ResolveLinks(IResource resource)
         {
             var type = resource.GetType();
-            
+
             return hypermedia.ContainsKey(type)
                 ? hypermedia[type]
                 : new Link[0];
@@ -118,6 +113,11 @@ namespace WebApi.Hal
             clone.Rel = Link.RelForSelf;
 
             return clone;
+        }
+
+        public static IHypermediaBuilder CreateBuilder()
+        {
+            return new Hypermedia();
         }
     }
 }

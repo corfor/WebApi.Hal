@@ -8,10 +8,8 @@ namespace WebApi.Hal.Web.Api.Resources
     {
         public int Id { get; set; }
         public string Name { get; set; }
-
         public int? BreweryId { get; set; }
         public string BreweryName { get; set; }
-
         public int? StyleId { get; set; }
         public string StyleName { get; set; }
 
@@ -26,21 +24,21 @@ namespace WebApi.Hal.Web.Api.Resources
 
         public override string Href
         {
-            get { return LinkTemplates.Beers.Beer.CreateLink(new { id = Id }).Href; }
+            get { return LinkTemplates.Beers.Beer.CreateLink(new {id = Id}).Href; }
             set { }
         }
 
         protected override void CreateHypermedia()
         {
             if (StyleId != null)
-                AddLink(LinkTemplates.BeerStyles.Style.CreateLink(new { id = StyleId }));
+                AddLink(LinkTemplates.BeerStyles.Style.CreateLink(new {id = StyleId}));
             if (BreweryId != null)
-                AddLink(LinkTemplates.Breweries.Brewery.CreateLink(new { id = BreweryId }));
+                AddLink(LinkTemplates.Breweries.Brewery.CreateLink(new {id = BreweryId}));
 
-            if (ReviewIds == null || !ReviewIds.Any() ) return;
+            if (ReviewIds == null || !ReviewIds.Any()) return;
 
             foreach (var rid in ReviewIds)
-                AddLink(LinkTemplates.Reviews.GetBeerReview.CreateLink(new { id = Id, rid }));
+                AddLink(LinkTemplates.Reviews.GetBeerReview.CreateLink(new {id = Id, rid}));
         }
     }
 }

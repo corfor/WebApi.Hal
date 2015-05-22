@@ -10,28 +10,27 @@ namespace WebApi.Hal.Tests
 {
     public class HalResourceListTests
     {
-        readonly OrganisationListRepresentation representation;
-
         readonly OrganisationListRepresentation oneitemrepresentation;
+        readonly OrganisationListRepresentation representation;
 
         public HalResourceListTests()
         {
             representation = new OrganisationListRepresentation(
                 new List<OrganisationRepresentation>
-                       {
-                           new OrganisationRepresentation(1, "Org1"),
-                           new OrganisationRepresentation(2, "Org2")
-                       });
+                {
+                    new OrganisationRepresentation(1, "Org1"),
+                    new OrganisationRepresentation(2, "Org2")
+                });
 
             oneitemrepresentation = new OrganisationListRepresentation(
                 new List<OrganisationRepresentation>
-                       {
-                           new OrganisationRepresentation(1, "Org1")
-                       });
+                {
+                    new OrganisationRepresentation(1, "Org1")
+                });
         }
 
         [Fact]
-        [UseReporter(typeof(DiffReporter))]
+        [UseReporter(typeof (DiffReporter))]
         public void organisation_list_get_xml_test()
         {
             // arrange
@@ -52,11 +51,11 @@ namespace WebApi.Hal.Tests
         }
 
         [Fact]
-        [UseReporter(typeof(DiffReporter))]
+        [UseReporter(typeof (DiffReporter))]
         public void organisation_list_get_json_test()
         {
             // arrange
-            var mediaFormatter = new JsonHalMediaTypeFormatter { Indent = true };
+            var mediaFormatter = new JsonHalMediaTypeFormatter {Indent = true};
             var content = new StringContent(string.Empty);
             var type = representation.GetType();
 
@@ -70,16 +69,14 @@ namespace WebApi.Hal.Tests
                 // assert
                 Approvals.Verify(serialisedResult);
             }
-
-
         }
 
         [Fact]
-        [UseReporter(typeof(DiffReporter))]
+        [UseReporter(typeof (DiffReporter))]
         public void one_item_organisation_list_get_json_test()
         {
             // arrange
-            var mediaFormatter = new JsonHalMediaTypeFormatter { Indent = true };
+            var mediaFormatter = new JsonHalMediaTypeFormatter {Indent = true};
             var content = new StringContent(string.Empty);
             var type = oneitemrepresentation.GetType();
 

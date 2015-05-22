@@ -6,22 +6,22 @@ using System.Xml.Linq;
 
 namespace WebApi.Hal
 {
-    internal static class ReflectionExtensions
+    static class ReflectionExtensions
     {
-        static readonly string[] NonSerializedProperties = new[] { "Rel", "Href", "LinkName" };
+        static readonly string[] NonSerializedProperties = {"Rel", "Href", "LinkName"};
 
         public static bool IsValidBasicType(this PropertyInfo property)
         {
             return !NonSerializedProperties.Contains(property.Name) && property.PropertyType.Namespace == "System"
-                   && (property.PropertyType.IsValueType || property.PropertyType == typeof(string));
+                   && (property.PropertyType.IsValueType || property.PropertyType == typeof (string));
         }
 
         public static bool IsGenericListOfApiResource(this Type type)
         {
-            if (type.IsGenericType && typeof(IList).IsAssignableFrom(type))
+            if (type.IsGenericType && typeof (IList).IsAssignableFrom(type))
             {
                 var genericType = type.GetGenericArguments().Single();
-                return typeof(Representation).IsAssignableFrom(genericType);
+                return typeof (Representation).IsAssignableFrom(genericType);
             }
 
             return false;
@@ -36,41 +36,42 @@ namespace WebApi.Hal
         {
             var property = type.GetProperty(propertyName);
 
-            if (property.PropertyType == typeof(int) || property.PropertyType == typeof(int?))
+            if (property.PropertyType == typeof (int) || property.PropertyType == typeof (int?))
             {
                 property.SetPropertyValueFromString(Convert.ToInt32, value, instance);
             }
-            else if (property.PropertyType == typeof(string))
+            else if (property.PropertyType == typeof (string))
             {
                 property.SetPropertyValueFromString(Convert.ToString, value, instance);
             }
-            else if (property.PropertyType == typeof(DateTime) || property.PropertyType == typeof(DateTime?))
+            else if (property.PropertyType == typeof (DateTime) || property.PropertyType == typeof (DateTime?))
             {
                 property.SetPropertyValueFromString(Convert.ToDateTime, value, instance);
             }
-            else if (property.PropertyType == typeof(short) || property.PropertyType == typeof(short?))
+            else if (property.PropertyType == typeof (short) || property.PropertyType == typeof (short?))
             {
                 property.SetPropertyValueFromString(Convert.ToInt16, value, instance);
             }
-            else if (property.PropertyType == typeof(decimal) || property.PropertyType == typeof(decimal?))
+            else if (property.PropertyType == typeof (decimal) || property.PropertyType == typeof (decimal?))
             {
                 property.SetPropertyValueFromString(Convert.ToDecimal, value, instance);
             }
-            else if (property.PropertyType == typeof(bool) || property.PropertyType == typeof(bool?))
+            else if (property.PropertyType == typeof (bool) || property.PropertyType == typeof (bool?))
             {
                 property.SetPropertyValueFromString(Convert.ToBoolean, value, instance);
             }
-            else if (property.PropertyType == typeof(byte) || property.PropertyType == typeof(byte?))
+            else if (property.PropertyType == typeof (byte) || property.PropertyType == typeof (byte?))
             {
                 property.SetPropertyValueFromString(Convert.ToByte, value, instance);
             }
-            else if (property.PropertyType == typeof(long) || property.PropertyType == typeof(long?))
+            else if (property.PropertyType == typeof (long) || property.PropertyType == typeof (long?))
             {
                 property.SetPropertyValueFromString(Convert.ToInt64, value, instance);
             }
             else
             {
-                throw new NotImplementedException("ResourceModel.ReflectionExtensions.SetPropertyValueFromString(...) does not yet support this data type: " + property.PropertyType);
+                throw new NotImplementedException("ResourceModel.ReflectionExtensions.SetPropertyValueFromString(...) does not yet support this data type: " +
+                                                  property.PropertyType);
             }
         }
 
@@ -96,7 +97,7 @@ namespace WebApi.Hal
 
         static void SetPropertyValueFromString<T>(this PropertyInfo property, Func<string, T> conversion, string value, object instance)
         {
-            T convertedValue = value == null ? default(T) : conversion(value);
+            var convertedValue = value == null ? default(T) : conversion(value);
 
             property.SetValue(instance, convertedValue, null);
         }

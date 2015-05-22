@@ -12,7 +12,7 @@ namespace WebApi.Hal.Web.Api.Resources
         {
             Href = LinkTemplates.BeerStyles.GetStyles.Href;
 
-            AddLink(new Link { Href = Href, Rel = "self" });
+            AddLink(new Link {Href = Href, Rel = "self"});
         }
     }
 }

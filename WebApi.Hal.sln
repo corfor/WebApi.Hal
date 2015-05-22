@@ -1,7 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi.Hal", "WebApi.Hal\WebApi.Hal.csproj", "{8A01C801-D7E6-4ACB-A843-7C3EFB7833F7}"
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi.Hal.Ltcg", "WebApi.Hal\WebApi.Hal.Ltcg.csproj", "{8A01C801-D7E6-4ACB-A843-7C3EFB7833F7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi.Hal.Web", "WebApi.Hal.Web\WebApi.Hal.Web.csproj", "{2C93BCF7-6A6B-40FE-80DD-8C9C10427F02}"
 EndProject

@@ -15,7 +15,7 @@
 
         public override string Href
         {
-            get { return LinkTemplates.Reviews.GetBeerReview.CreateLink(new { id = Beer_Id, rid = Id }).Href; }
+            get { return LinkTemplates.Reviews.GetBeerReview.CreateLink(new {id = Beer_Id, rid = Id}).Href; }
             set { }
         }
 

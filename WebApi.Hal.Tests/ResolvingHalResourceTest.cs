@@ -10,8 +10,8 @@ namespace WebApi.Hal.Tests
 {
     public class ResolvingHalResourceTest
     {
-        readonly ProductRepresentation representation;
         readonly IHypermediaResolver config;
+        readonly ProductRepresentation representation;
 
         public ResolvingHalResourceTest()
         {
@@ -50,13 +50,13 @@ namespace WebApi.Hal.Tests
 
             config = builder.Build();
         }
-        
+
         [Fact]
-        [UseReporter(typeof(DiffReporter))]
+        [UseReporter(typeof (DiffReporter))]
         public void ProperlySerializesRepresentationToJson()
         {
             // arrange
-            var mediaFormatter = new JsonHalMediaTypeFormatter(config) { Indent = true };
+            var mediaFormatter = new JsonHalMediaTypeFormatter(config) {Indent = true};
             var content = new StringContent(string.Empty);
             var type = representation.GetType();
 

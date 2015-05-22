@@ -12,7 +12,6 @@ namespace WebApi.Hal.Web.Api
     public class BeersController : ApiController
     {
         public const int PageSize = 5;
-
         readonly IRepository repository;
 
         public BeersController(IRepository repository)
@@ -40,8 +39,8 @@ namespace WebApi.Hal.Web.Api
 
             //var link = LinkTemplates.Beers.SearchBeers.CreateLink(new { searchTerm, page });
             var beersResource = new BeerListRepresentation(beers.ToList(), beers.TotalResults, beers.TotalPages, page,
-                                                           LinkTemplates.Beers.SearchBeers,
-                                                           new { searchTerm })
+                LinkTemplates.Beers.SearchBeers,
+                new {searchTerm})
             {
                 Page = page,
                 TotalResults = beers.TotalResults
@@ -60,11 +59,9 @@ namespace WebApi.Hal.Web.Api
             {
                 Headers =
                 {
-                    Location = LinkTemplates.Beers.Beer.CreateUri(new { id = newBeer.Id })
+                    Location = LinkTemplates.Beers.Beer.CreateUri(new {id = newBeer.Id})
                 }
             };
         }
-
-        
     }
 }

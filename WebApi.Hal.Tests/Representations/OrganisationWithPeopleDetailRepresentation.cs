@@ -69,7 +69,6 @@ namespace WebApi.Hal.Tests.Representations
 
         public int Id { get; set; }
         public string Name { get; set; }
-
         public List<Person> People { get; set; }
         public Boss Boss { get; set; }
 

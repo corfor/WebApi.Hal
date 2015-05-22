@@ -14,7 +14,7 @@ namespace WebApi.Hal.Tests
         readonly ProductRepresentation representation = new ProductRepresentation();
 
         [Fact]
-        [UseReporter(typeof(DiffReporter))]
+        [UseReporter(typeof (DiffReporter))]
         public void CanUseRegisterExtensionMethod()
         {
             var curie = new CuriesLink("aap", "http://www.helpt.com/{?rel}");
@@ -23,13 +23,13 @@ namespace WebApi.Hal.Tests
             var selfLink = new Link<ProductRepresentation>("product", "http://www.product.com?id=1");
             var link2 = new Link("related", "http://www.related.com");
             var link3 = curie.CreateLink<CategoryRepresentation>("category", "http://www.category.com");
-            
+
             builder.Register(selfLink, link2, link3);
-            
+
             var config = builder.Build();
 
             // arrange
-            var mediaFormatter = new JsonHalMediaTypeFormatter(config) { Indent = true };
+            var mediaFormatter = new JsonHalMediaTypeFormatter(config) {Indent = true};
             var content = new StringContent(string.Empty);
             var type = representation.GetType();
 
@@ -58,7 +58,6 @@ namespace WebApi.Hal.Tests
             var registered = config.ResolveAppender(resource);
 
             Assert.True(ReferenceEquals(appender, registered));
-
         }
 
         [Fact]
@@ -80,9 +79,9 @@ namespace WebApi.Hal.Tests
 
             var link = new Link("example-namespace:product", href);
             var builder = Hypermedia.CreateBuilder();
-            
+
             builder.RegisterSelf<ProductRepresentation>(link);
-            
+
             var config = builder.Build();
             var registered = config.ResolveSelf(representation);
 
@@ -97,7 +96,7 @@ namespace WebApi.Hal.Tests
             var link = new Link();
 
             builder.RegisterLinks<ProductRepresentation>(link);
-            
+
             var config = builder.Build();
             var hypermedia = config.ResolveLinks(representation);
 

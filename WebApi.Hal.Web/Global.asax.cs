@@ -1,21 +1,21 @@
-﻿using System;
-using System.Configuration;
+﻿using System.Configuration;
 using System.Data.Entity;
-using System.Linq;
 using System.Reflection;
+using System.Web;
 using System.Web.Http;
 using Autofac;
 using Autofac.Integration.WebApi;
+using CacheCow.Server;
 using Newtonsoft.Json;
 using WebApi.Hal.Web.App_Start;
 using WebApi.Hal.Web.Data;
 
 namespace WebApi.Hal.Web
 {
-    public class WebApiApplication : System.Web.HttpApplication
+    public class WebApiApplication : HttpApplication
     {
-        IContainer container;
         string connectionString;
+        IContainer container;
 
         protected void Application_Start()
         {
@@ -24,10 +24,10 @@ namespace WebApi.Hal.Web
             RouteConfig.RegisterRoutes(GlobalConfiguration.Configuration.Routes);
 
             GlobalConfiguration.Configuration.Formatters.Add(new JsonHalMediaTypeFormatter());
-            GlobalConfiguration.Configuration.Formatters.Add(new XmlHalMediaTypeFormatter());
-            var xmlFormatter =
-                GlobalConfiguration.Configuration.Formatters.FirstOrDefault(f => f.SupportedMediaTypes.Any(m => string.Equals(m.MediaType, "application/xml", StringComparison.OrdinalIgnoreCase)));
-            if (xmlFormatter != null) GlobalConfiguration.Configuration.Formatters.Remove(xmlFormatter);
+            //GlobalConfiguration.Configuration.Formatters.Add(new XmlHalMediaTypeFormatter());
+
+            GlobalConfiguration.Configuration.Formatters.Remove(GlobalConfiguration.Configuration.Formatters.JsonFormatter);
+            GlobalConfiguration.Configuration.Formatters.Remove(GlobalConfiguration.Configuration.Formatters.XmlFormatter);
 
             var containerBuilder = new ContainerBuilder();
 
@@ -38,15 +38,17 @@ namespace WebApi.Hal.Web
             container = containerBuilder.Build();
             GlobalConfiguration.Configuration.DependencyResolver = new AutofacWebApiDependencyResolver(container);
             GlobalConfiguration.Configuration.Formatters.JsonFormatter.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+
+            GlobalConfiguration.Configuration.MessageHandlers.Add(new CachingHandler(GlobalConfiguration.Configuration));
         }
 
-        private void ConfigureContainer(ContainerBuilder containerBuilder)
+        void ConfigureContainer(ContainerBuilder containerBuilder)
         {
             // Register API controllers using assembly scanning.
             containerBuilder.RegisterApiControllers(Assembly.GetExecutingAssembly());
 
             containerBuilder
-                .Register(c=> new BeerDbContext(connectionString))
+                .Register(c => new BeerDbContext(connectionString))
                 .As<IBeerDbContext>()
                 .InstancePerRequest();
 

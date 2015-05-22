@@ -26,15 +26,15 @@ namespace WebApi.Hal
     {
         public const string RelForSelf = "self";
         public const string RelForCuries = "curies";
-
         static readonly IEqualityComparer<Link> ComparerInstance = new LinkEqualityComparer();
-
-        string linkRelation;
+        static readonly Regex IsTemplatedRegex = new Regex(@"{.+}", RegexOptions.Compiled);
         readonly CuriesLink curie;
+        string linkRelation;
 
         public Link()
-        { }
-        
+        {
+        }
+
         public Link(string rel, string href, CuriesLink curie)
         {
             if (string.IsNullOrEmpty(rel))
@@ -80,16 +80,19 @@ namespace WebApi.Hal
         public string Name { get; set; }
         public string Profile { get; set; }
         public string HrefLang { get; set; }
-        
+
         public bool IsTemplated
         {
             get { return !string.IsNullOrEmpty(Href) && IsTemplatedRegex.IsMatch(Href); }
         }
 
-        private static readonly Regex IsTemplatedRegex = new Regex(@"{.+}", RegexOptions.Compiled);
+        public static IEqualityComparer<Link> EqualityComparer
+        {
+            get { return ComparerInstance; }
+        }
 
         /// <summary>
-        /// If this link is templated, you can use this method to make a non templated copy
+        ///     If this link is templated, you can use this method to make a non templated copy
         /// </summary>
         /// <param name="newRel">A different rel</param>
         /// <param name="parameters">The parameters, i.e 'new {id = "1"}'</param>
@@ -103,9 +106,9 @@ namespace WebApi.Hal
 
             return clone;
         }
-        
+
         /// <summary>
-        /// If this link is templated, you can use this method to make a non templated copy
+        ///     If this link is templated, you can use this method to make a non templated copy
         /// </summary>
         /// <param name="parameters">The parameters, i.e 'new {id = "1"}'</param>
         /// <returns>A non templated link</returns>
@@ -140,12 +143,12 @@ namespace WebApi.Hal
         }
 
         /// <summary>
-        /// Performs a shallow clone of the instance
+        ///     Performs a shallow clone of the instance
         /// </summary>
         /// <returns>Cloned instance</returns>
         public Link Clone()
         {
-            return (Link)MemberwiseClone();
+            return (Link) MemberwiseClone();
         }
 
         sealed class LinkEqualityComparer : IEqualityComparer<Link>
@@ -156,7 +159,6 @@ namespace WebApi.Hal
                        string.Compare(l1.Rel, l2.Rel, StringComparison.OrdinalIgnoreCase) == 0;
             }
 
-
             public int GetHashCode(Link lnk)
             {
                 var str = (string.IsNullOrEmpty(lnk.Rel) ? "norel" : lnk.Rel) + "~" + (string.IsNullOrEmpty(lnk.Href) ? "nohref" : lnk.Href);
@@ -164,12 +166,5 @@ namespace WebApi.Hal
                 return h;
             }
         }
-
-        public static IEqualityComparer<Link> EqualityComparer
-        {
-            get { return ComparerInstance; }
-        }
     }
-
-    
 }

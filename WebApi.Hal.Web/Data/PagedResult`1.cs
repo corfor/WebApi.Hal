@@ -5,7 +5,7 @@ namespace WebApi.Hal.Web.Data
 {
     public class PagedResult<T> : IEnumerable<T>
     {
-        private readonly IList<T> results;
+        readonly IList<T> results;
 
         public PagedResult(IList<T> results, int totalCount, int skipped, int itemsPerPage)
         {
@@ -19,9 +19,10 @@ namespace WebApi.Hal.Web.Data
         public int TotalResults { get; private set; }
 
         /// <summary>
-        /// Page Number is 0 based
+        ///     Page Number is 0 based
         /// </summary>
         public int Page { get; private set; }
+
         public int TotalPages { get; private set; }
         public int ItemsPerPage { get; private set; }
 
@@ -30,14 +31,14 @@ namespace WebApi.Hal.Web.Data
             get { return results.Count; }
         }
 
-        public IEnumerator<T> GetEnumerator()
-        {
-            return results.GetEnumerator();
-        }
-
         public T this[int index]
         {
             get { return results[index]; }
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            return results.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

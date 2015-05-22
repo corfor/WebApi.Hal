@@ -94,9 +94,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WebApi.Hal\WebApi.Hal.csproj">
+    <ProjectReference Include="..\WebApi.Hal\WebApi.Hal.Ltcg.csproj">
       <Project>{8A01C801-D7E6-4ACB-A843-7C3EFB7833F7}</Project>
-      <Name>WebApi.Hal</Name>
+      <Name>WebApi.Hal.Ltcg</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

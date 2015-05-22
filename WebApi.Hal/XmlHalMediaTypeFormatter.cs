@@ -22,7 +22,7 @@ namespace WebApi.Hal
 
         public override object ReadFromStream(Type type, Stream stream, HttpContent content, IFormatterLogger formatterLogger)
         {
-            if (!typeof(Representation).IsAssignableFrom(type))
+            if (!typeof (Representation).IsAssignableFrom(type))
             {
                 return null;
             }
@@ -39,7 +39,7 @@ namespace WebApi.Hal
                 return;
             }
 
-            var settings = new XmlWriterSettings { Indent = true };
+            var settings = new XmlWriterSettings {Indent = true};
 
             var writer = XmlWriter.Create(stream, settings);
             WriteHalResource(resource, writer);
@@ -47,7 +47,7 @@ namespace WebApi.Hal
         }
 
         /// <summary>
-        /// ReadHalResource will
+        ///     ReadHalResource will
         /// </summary>
         /// <param name="type">Type of resource - Must be of type ApiResource</param>
         /// <param name="xml">xelement for the type</param>
@@ -62,18 +62,18 @@ namespace WebApi.Hal
             }
 
             // First, determine if Resource of type Generic List and construct Instance with respective Parameters
-            if (typeof(IRepresentationList).IsAssignableFrom(type))
+            if (typeof (IRepresentationList).IsAssignableFrom(type))
             {
-                var resourceListXml = xml.Elements("resource");  // .Where(x => x.Attribute("rel").Value == "item");
+                var resourceListXml = xml.Elements("resource"); // .Where(x => x.Attribute("rel").Value == "item");
                 var genericTypeArg = type.GetGenericArguments().Single();
-                var resourceList = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(genericTypeArg));
+                var resourceList = (IList) Activator.CreateInstance(typeof (List<>).MakeGenericType(genericTypeArg));
 
                 foreach (var resourceListItem in resourceListXml.Select(resourceXml => ReadHalResource(genericTypeArg, resourceXml)))
                 {
                     resourceList.Add(resourceListItem);
                 }
 
-                representation = Activator.CreateInstance(type, new object[] { resourceList }) as Representation;
+                representation = Activator.CreateInstance(type, resourceList) as Representation;
             }
             else
             {
@@ -107,7 +107,7 @@ namespace WebApi.Hal
                 {
                     type.SetPropertyValue(property.Name, xml.Element(property.Name), representation);
                 }
-                else if (typeof(Representation).IsAssignableFrom(property.PropertyType) &&
+                else if (typeof (Representation).IsAssignableFrom(property.PropertyType) &&
                          property.GetIndexParameters().Length == 0)
                 {
                     var resourceXml =
@@ -216,12 +216,12 @@ namespace WebApi.Hal
 
         public override bool CanReadType(Type type)
         {
-            return typeof(Representation).IsAssignableFrom(type);
+            return typeof (Representation).IsAssignableFrom(type);
         }
 
         public override bool CanWriteType(Type type)
         {
-            return typeof(Representation).IsAssignableFrom(type);
+            return typeof (Representation).IsAssignableFrom(type);
         }
     }
 }

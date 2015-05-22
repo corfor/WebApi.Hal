@@ -25,11 +25,11 @@ namespace WebApi.Hal.Tests
         }
 
         [Fact]
-        [UseReporter(typeof(DiffReporter))]
+        [UseReporter(typeof (DiffReporter))]
         public void peopledetail_get_json_test()
         {
             // arrange
-            var mediaFormatter = new JsonHalMediaTypeFormatter { Indent = true };
+            var mediaFormatter = new JsonHalMediaTypeFormatter {Indent = true};
             var content = new StringContent(string.Empty);
             var type = resource.GetType();
 
@@ -46,7 +46,7 @@ namespace WebApi.Hal.Tests
         }
 
         [Fact]
-        [UseReporter(typeof(DiffReporter))]
+        [UseReporter(typeof (DiffReporter))]
         public void peopledetail_get_xml_test()
         {
             // arrange
@@ -70,7 +70,7 @@ namespace WebApi.Hal.Tests
         public void peopledetail_post_json_props_test()
         {
             // arrange
-            var mediaFormatter = new JsonHalMediaTypeFormatter { Indent = true };
+            var mediaFormatter = new JsonHalMediaTypeFormatter {Indent = true};
             var type = typeof (OrganisationWithPeopleDetailRepresentation);
             const string json = @"
 {
@@ -97,8 +97,8 @@ namespace WebApi.Hal.Tests
         public void peopledetail_post_json_links_test()
         {
             // arrange
-            var mediaFormatter = new JsonHalMediaTypeFormatter { Indent = true };
-            var type = typeof(OrganisationWithPeopleRepresentation);
+            var mediaFormatter = new JsonHalMediaTypeFormatter {Indent = true};
+            var type = typeof (OrganisationWithPeopleRepresentation);
             const string json = @"
 {
 ""Id"":""3"",
@@ -143,7 +143,7 @@ namespace WebApi.Hal.Tests
         {
             // arrange
             var mediaFormatter = new JsonHalMediaTypeFormatter {Indent = true};
-            var type = typeof(OrganisationWithPeopleDetailRepresentation);
+            var type = typeof (OrganisationWithPeopleDetailRepresentation);
             const string json = @"
 {
 ""Id"":""3"",
@@ -178,8 +178,8 @@ namespace WebApi.Hal.Tests
         public void peopledetail_post_json_embedded_arrays_test()
         {
             // arrange
-            var mediaFormatter = new JsonHalMediaTypeFormatter { Indent = true };
-            var type = typeof(OrganisationWithPeopleDetailRepresentation);
+            var mediaFormatter = new JsonHalMediaTypeFormatter {Indent = true};
+            var type = typeof (OrganisationWithPeopleDetailRepresentation);
             const string json = @"
 {
 ""Id"":""3"",
@@ -214,21 +214,12 @@ namespace WebApi.Hal.Tests
             }
         }
 
-        class MySimpleList : SimpleListRepresentation<OrganisationRepresentation>
-        {
-            protected override void CreateHypermedia()
-            {
-            }
-
-            public string SimpleData { get; set; }
-        }
-
         [Fact]
         public void simplelist_post_json_test()
         {
             // arrange
-            var mediaFormatter = new JsonHalMediaTypeFormatter { Indent = true };
-            var type = typeof(MySimpleList);
+            var mediaFormatter = new JsonHalMediaTypeFormatter {Indent = true};
+            var type = typeof (MySimpleList);
             const string json = @"
 {
 ""_embedded"": {
@@ -261,6 +252,15 @@ namespace WebApi.Hal.Tests
                 Assert.Equal("Org Eight", orgList.ResourceList[1].Name);
                 Assert.Equal("/api/organisations/8", orgList.ResourceList[1].Href);
                 Assert.Equal("simple string", orgList.SimpleData);
+            }
+        }
+
+        class MySimpleList : SimpleListRepresentation<OrganisationRepresentation>
+        {
+            public string SimpleData { get; set; }
+
+            protected override void CreateHypermedia()
+            {
             }
         }
     }

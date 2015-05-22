@@ -61,7 +61,7 @@
     }
 
     /// <summary>
-    /// no self link is desired, as is the case when a client generates a represent to send to the server
+    ///     no self link is desired, as is the case when a client generates a represent to send to the server
     /// </summary>
     public class OrganisationWithNoHrefRepresentation : Representation
     {
@@ -94,7 +94,7 @@
     }
 
     /// <summary>
-    /// link title
+    ///     link title
     /// </summary>
     public class OrganisationWithLinkTitleRepresentation : Representation
     {

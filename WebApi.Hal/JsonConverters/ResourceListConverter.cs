@@ -5,16 +5,21 @@ using WebApi.Hal.Interfaces;
 
 namespace WebApi.Hal.JsonConverters
 {
-    [Obsolete("use SimpleListRepresentation instead of RepresentationList")]
+    //[Obsolete("use SimpleListRepresentation instead of RepresentationList")]
     public class ResourceListConverter : JsonConverter
     {
+        public override bool CanRead
+        {
+            get { return false; }
+        }
+
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             var representation = value as Representation;
             if (representation != null)
                 representation.RepopulateHyperMedia();
 
-            var list = (IRepresentationList)value;
+            var list = (IRepresentationList) value;
 
             writer.WriteStartObject();
             writer.WritePropertyName("_links");
@@ -33,7 +38,9 @@ namespace WebApi.Hal.JsonConverters
             writer.WriteEndObject();
 
             var listType = list.GetType();
-            var propertyInfos = typeof(RepresentationList<>).GetProperties().Select(p => p.Name);
+#pragma warning disable 618
+            var propertyInfos = typeof (RepresentationList<>).GetProperties().Select(p => p.Name);
+#pragma warning restore 618
             foreach (var property in listType.GetProperties().Where(p => !propertyInfos.Contains(p.Name)))
             {
                 writer.WritePropertyName(property.Name.ToLower());
@@ -41,11 +48,6 @@ namespace WebApi.Hal.JsonConverters
             }
 
             writer.WriteEndObject();
-        }
-
-        public override bool CanRead
-        {
-            get { return false; }
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
@@ -60,12 +62,12 @@ namespace WebApi.Hal.JsonConverters
 
         static bool IsResourceList(Type objectType)
         {
-            return typeof(IRepresentationList).IsAssignableFrom(objectType);
+            return typeof (IRepresentationList).IsAssignableFrom(objectType);
         }
 
         static bool IsResource(Type objectType)
         {
-            return typeof(Representation).IsAssignableFrom(objectType);
+            return typeof (Representation).IsAssignableFrom(objectType);
         }
     }
 }

@@ -7,7 +7,7 @@ using WebApi.Hal.Web.Models;
 namespace WebApi.Hal.Web.Data.Queries
 {
     /// <summary>
-    /// Gets a list of beers, with no hypermedia on the resource
+    ///     Gets a list of beers, with no hypermedia on the resource
     /// </summary>
     public class GetBeersQuery : IPagedQuery<BeerRepresentation>
     {
@@ -15,7 +15,7 @@ namespace WebApi.Hal.Web.Data.Queries
 
         public GetBeersQuery(Expression<Func<Beer, bool>> where = null)
         {
-            this.where = where ?? (b=>true);
+            this.where = where ?? (b => true);
         }
 
         public PagedResult<BeerRepresentation> Execute(IBeerDbContext dbContext, int skip, int take)

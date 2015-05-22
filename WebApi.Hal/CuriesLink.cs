@@ -9,7 +9,6 @@ namespace WebApi.Hal
     public class CuriesLink
     {
         const string CuriesRelExpression = "rel";
-
         static readonly IEqualityComparer<CuriesLink> ComparerInstance = new NameEqualityComparer();
 
         public CuriesLink(string name, string href)
@@ -29,6 +28,11 @@ namespace WebApi.Hal
 
         public string Name { get; private set; }
         public string Href { get; private set; }
+
+        public static IEqualityComparer<CuriesLink> EqualityComparer
+        {
+            get { return ComparerInstance; }
+        }
 
         string CreateLinkRelation(string name)
         {
@@ -51,7 +55,7 @@ namespace WebApi.Hal
             return new Link<T>(CreateLinkRelation(name), href, this);
         }
 
-        private static bool IsValidCuriesHref(string template)
+        static bool IsValidCuriesHref(string template)
         {
             if (string.IsNullOrEmpty(template))
                 return false;
@@ -86,12 +90,12 @@ namespace WebApi.Hal
             return foundRel;
         }
 
-        private static bool IsValidCuriesHrefRelExpression(string expression)
+        static bool IsValidCuriesHrefRelExpression(string expression)
         {
             if (expression.Equals(CuriesRelExpression, StringComparison.OrdinalIgnoreCase))
                 return true;
 
-            var operators = new[] { '+', ';', '/', '#', '&', '?', '.' };
+            var operators = new[] {'+', ';', '/', '#', '&', '?', '.'};
             var first = expression[0];
 
             if (operators.Any(o => o == first))
@@ -108,11 +112,6 @@ namespace WebApi.Hal
                 Name = Name,
                 Href = Href
             };
-        }
-
-        public static IEqualityComparer<CuriesLink> EqualityComparer
-        {
-            get { return ComparerInstance; }
         }
 
         sealed class NameEqualityComparer : IEqualityComparer<CuriesLink>

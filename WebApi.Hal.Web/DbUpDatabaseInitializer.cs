@@ -17,7 +17,7 @@ namespace WebApi.Hal.Web
         {
             DeployChanges.To
                 .SqlDatabase(connectionString)
-                .WithScriptsEmbeddedInAssembly(typeof(WebApiApplication).Assembly)
+                .WithScriptsEmbeddedInAssembly(typeof (WebApiApplication).Assembly)
                 .Build()
                 .PerformUpgrade();
         }

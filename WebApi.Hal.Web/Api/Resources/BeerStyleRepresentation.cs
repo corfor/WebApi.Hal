@@ -13,7 +13,7 @@ namespace WebApi.Hal.Web.Api.Resources
 
         public override string Href
         {
-            get { return LinkTemplates.BeerStyles.Style.CreateLink(new { id = Id }).Href; }
+            get { return LinkTemplates.BeerStyles.Style.CreateLink(new {id = Id}).Href; }
             set { }
         }
 

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using WebApi.Hal.Interfaces;
 
 namespace WebApi.Hal
@@ -11,7 +10,7 @@ namespace WebApi.Hal
 
         public ActionBasedHypermediaAppender(Action<T, IEnumerable<Link>> appendAction)
         {
-            if (appendAction == null) 
+            if (appendAction == null)
                 throw new ArgumentNullException("appendAction");
 
             this.appendAction = appendAction;

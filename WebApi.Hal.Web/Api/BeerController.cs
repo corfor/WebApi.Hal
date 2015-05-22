@@ -1,5 +1,5 @@
-﻿using System.Web.Http;
-using System.Linq;
+﻿using System.Linq;
+using System.Web.Http;
 using WebApi.Hal.Web.Api.Resources;
 using WebApi.Hal.Web.Data;
 
@@ -23,9 +23,9 @@ namespace WebApi.Hal.Web.Api
             {
                 Id = beer.Id,
                 Name = beer.Name,
-                BreweryId = beer.Brewery == null ? (int?)null : beer.Brewery.Id,
+                BreweryId = beer.Brewery == null ? (int?) null : beer.Brewery.Id,
                 BreweryName = beer.Brewery == null ? null : beer.Brewery.Name,
-                StyleId = beer.Style == null ? (int?)null : beer.Style.Id,
+                StyleId = beer.Style == null ? (int?) null : beer.Style.Id,
                 StyleName = beer.Style == null ? null : beer.Style.Name,
                 ReviewIds = beerDbContext.Reviews.Where(r => r.Beer_Id == id).Select(r => r.Id).ToList()
             };

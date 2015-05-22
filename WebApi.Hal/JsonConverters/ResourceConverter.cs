@@ -13,7 +13,11 @@ namespace WebApi.Hal.JsonConverters
     public class ResourceConverter : JsonConverter
     {
         const StreamingContextStates StreamingContextResourceConverterState = StreamingContextStates.Other;
-
+        const string HalLinksName = "_links";
+        const string HalEmbeddedName = "_embedded";
+        // this depends on IResource.Rel being set upon construction
+        static readonly IDictionary<string, string> ResourceTypeToRel = new Dictionary<string, string>();
+        static readonly object ResourceTypeToRelLock = new object();
         readonly IHypermediaResolver hypermediaConfiguration;
 
         public ResourceConverter()
@@ -33,7 +37,7 @@ namespace WebApi.Hal.JsonConverters
             return context.Context is HalJsonConverterContext && context.State == StreamingContextResourceConverterState;
         }
 
-        private StreamingContext GetResourceConverterContext()
+        StreamingContext GetResourceConverterContext()
         {
             var context = (hypermediaConfiguration == null)
                 ? new HalJsonConverterContext()
@@ -44,7 +48,7 @@ namespace WebApi.Hal.JsonConverters
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            var resource = (IResource)value;
+            var resource = (IResource) value;
 
             var saveContext = serializer.Context;
             serializer.Context = GetResourceConverterContext();
@@ -55,14 +59,11 @@ namespace WebApi.Hal.JsonConverters
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
-                                        JsonSerializer serializer)
+            JsonSerializer serializer)
         {
             // let exceptions leak out of here so ordinary exception handling in the server or client pipeline can take place
             return CreateResource(JObject.Load(reader), objectType);
         }
-
-        const string HalLinksName = "_links";
-        const string HalEmbeddedName = "_embedded";
 
         static IResource CreateResource(JObject jObj, Type resourceType)
         {
@@ -159,10 +160,6 @@ namespace WebApi.Hal.JsonConverters
             }
         }
 
-        // this depends on IResource.Rel being set upon construction
-        static readonly IDictionary<string, string> ResourceTypeToRel = new Dictionary<string, string>();
-        static readonly object ResourceTypeToRelLock = new object();
-
         static string GetResourceTypeRel(Type resourceType)
         {
             if (ResourceTypeToRel.ContainsKey(resourceType.FullName))
@@ -211,12 +208,12 @@ namespace WebApi.Hal.JsonConverters
 
         static bool IsResourceList(Type objectType)
         {
-            return typeof(IRepresentationList).IsAssignableFrom(objectType);
+            return typeof (IRepresentationList).IsAssignableFrom(objectType);
         }
 
         static bool IsResource(Type objectType)
         {
-            return typeof(Representation).IsAssignableFrom(objectType);
+            return typeof (Representation).IsAssignableFrom(objectType);
         }
     }
 }

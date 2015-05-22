@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using WebApi.Hal.Interfaces;
 using WebApi.Hal.Tests.Representations;
 
 namespace WebApi.Hal.Tests.HypermediaAppenders
@@ -13,7 +12,7 @@ namespace WebApi.Hal.Tests.HypermediaAppenders
                 switch (link.Rel)
                 {
                     case Link.RelForSelf:
-                        resource.AddLink(link.CreateLink(new { id = resource.Id }));
+                        resource.AddLink(link.CreateLink(new {id = resource.Id}));
                         break;
                     default:
                         resource.AddLink(link); // append untouched ...

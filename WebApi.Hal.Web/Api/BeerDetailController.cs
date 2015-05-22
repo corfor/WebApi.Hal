@@ -19,7 +19,7 @@ namespace WebApi.Hal.Web.Api
         {
             var beer = beerDbContext.Beers.Include("Brewery").Include("Style").Single(br => br.Id == id); // lazy loading isn't on for this query; force loading
             var reviews = beerDbContext.Reviews
-                .Where(r=>r.Beer_Id == id)
+                .Where(r => r.Beer_Id == id)
                 .ToList()
                 .Select(s => new ReviewRepresentation
                 {

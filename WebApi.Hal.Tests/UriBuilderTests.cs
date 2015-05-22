@@ -11,7 +11,7 @@ namespace WebApi.Hal.Tests
             var templateLink = new Link("beers", "/beers");
 
             // act
-            var link = templateLink.CreateLink(new{});
+            var link = templateLink.CreateLink(new {});
 
             // assert
             Assert.Equal("beers", link.Rel);
@@ -51,7 +51,7 @@ namespace WebApi.Hal.Tests
             var templateLink = new Link("beerSearch", "/beers{?searchTerm}");
 
             // act
-            var link = templateLink.CreateLink(new{searchTerm = "test"});
+            var link = templateLink.CreateLink(new {searchTerm = "test"});
 
             // assert
             Assert.Equal("/beers?searchTerm=test", link.Href);
@@ -64,7 +64,7 @@ namespace WebApi.Hal.Tests
             var templateLink = new Link("beerbyname", "/beers/{name}");
 
             // act
-            var link = templateLink.CreateLink(new { name = "Tactical Nuclear Penguin" });
+            var link = templateLink.CreateLink(new {name = "Tactical Nuclear Penguin"});
 
             // assert
             Assert.Equal("/beers/Tactical%20Nuclear%20Penguin", link.Href);
@@ -77,7 +77,7 @@ namespace WebApi.Hal.Tests
             var templateLink = new Link("beerbyname", "/beers/{naMe}");
 
             // act
-            var link = templateLink.CreateLink(new { nAme = "Sorry Charlie" });
+            var link = templateLink.CreateLink(new {nAme = "Sorry Charlie"});
 
             // assert
             Assert.Equal("/beers/", link.Href);
@@ -90,7 +90,7 @@ namespace WebApi.Hal.Tests
             var templateLink = new Link("beerbyname", "/beers/{nAme}");
 
             // act
-            var link = templateLink.CreateLink(new { nAme = "This Works" });
+            var link = templateLink.CreateLink(new {nAme = "This Works"});
 
             // assert
             Assert.Equal("/beers/This%20Works", link.Href);

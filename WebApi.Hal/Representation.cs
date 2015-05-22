@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Reflection;
+using System.Runtime;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using WebApi.Hal.Interfaces;
@@ -13,6 +15,8 @@ namespace WebApi.Hal
     {
         [JsonIgnore] readonly IDictionary<PropertyInfo, object> embeddedResourceProperties = new Dictionary<PropertyInfo, object>();
         [JsonIgnore] IList<Link> links;
+        string reasonPhrase;
+        HttpStatusCode statusCode;
 
         protected Representation()
         {
@@ -21,6 +25,50 @@ namespace WebApi.Hal
 
         [JsonProperty("_embedded")]
         IList<EmbeddedResource> Embedded { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the status code of the HTTP response.
+        /// </summary>
+        /// <returns>
+        ///     Returns <see cref="T:System.Net.HttpStatusCode" />.The status code of the HTTP response.
+        /// </returns>
+        /// <exception cref="ArgumentOutOfRangeException" accessor="set">Must be between 0 and 999, inclusive.</exception>
+        [JsonIgnore]
+        public HttpStatusCode StatusCode
+        {
+            get { return statusCode; }
+            set
+            {
+                if (value < 0 || value > (HttpStatusCode) 999)
+                    throw new ArgumentOutOfRangeException("value");
+                statusCode = value;
+            }
+        }
+
+        /// <summary>
+        ///     Gets or sets the reason phrase which typically is sent by servers together with the status code.
+        /// </summary>
+        /// <returns>
+        ///     Returns <see cref="T:System.String" />.The reason phrase sent by the server.
+        /// </returns>
+        /// <exception cref="FormatException" accessor="set">Cannot contain NewLine character</exception>
+        [JsonIgnore]
+        public string ReasonPhrase
+        {
+            get
+            {
+                if (reasonPhrase != null)
+                    return reasonPhrase;
+
+                return HttpStatusDescription.Get(StatusCode);
+            }
+            set
+            {
+                if (value != null && ContainsNewLineCharacter(value))
+                    throw new FormatException("ReasonPhrase cannot contain NewLine character.");
+                reasonPhrase = value;
+            }
+        }
 
         [JsonIgnore]
         public virtual string Rel { get; set; }
@@ -42,6 +90,21 @@ namespace WebApi.Hal
             links.Add(link);
         }
 
+        static bool ContainsNewLineCharacter(string value)
+        {
+            foreach (var ch in value)
+            {
+                switch (ch)
+                {
+                    case '\r':
+                    case '\n':
+                        return true;
+                    default:
+                        goto default;
+                }
+            }
+            return false;
+        }
 
         [OnSerializing]
         void OnSerialize(StreamingContext context)
@@ -75,7 +138,7 @@ namespace WebApi.Hal
         {
             if (!ResourceConverter.IsResourceConverterContext(context)) return;
             // restore embedded resource properties
-            foreach (PropertyInfo prop in embeddedResourceProperties.Keys)
+            foreach (var prop in embeddedResourceProperties.Keys)
                 prop.SetValue(this, embeddedResourceProperties[prop], null);
         }
 
@@ -108,7 +171,7 @@ namespace WebApi.Hal
 
         void RepopulateRecursively(IHypermediaResolver resolver, List<CuriesLink> curies)
         {
-            Type type = GetType();
+            var type = GetType();
 
             if (resolver == null)
                 RepopulateHyperMedia();
@@ -118,9 +181,9 @@ namespace WebApi.Hal
             // put all embedded resources and lists of resources into Embedded for the _embedded serializer
             Embedded = new List<EmbeddedResource>();
 
-            foreach (PropertyInfo property in type.GetProperties().Where(p => IsEmbeddedResourceType(p.PropertyType)))
+            foreach (var property in type.GetProperties().Where(p => IsEmbeddedResourceType(p.PropertyType)))
             {
-                object value = property.GetValue(this, null);
+                var value = property.GetValue(this, null);
 
                 if (value == null)
                     continue; // nothing to serialize for this property ...
@@ -139,7 +202,7 @@ namespace WebApi.Hal
                 property.SetValue(this, null, null);
             }
 
-            curies.AddRange(links.Where(l => l.Curie != null).Select(l => l.Curie));
+            curies.AddRange(links.Where(l => l != null && l.Curie != null).Select(l => l.Curie));
 
             if (Embedded.Count == 0)
                 Embedded = null; // avoid the property from being serialized ...
@@ -147,14 +210,14 @@ namespace WebApi.Hal
 
         void ProcessPropertyValue(IHypermediaResolver resolver, List<CuriesLink> curies, IEnumerable<IResource> resources)
         {
-            List<IResource> resourceList = resources.ToList();
+            var resourceList = resources.ToList();
 
             if (!resourceList.Any())
                 return;
 
             var embeddedResource = new EmbeddedResource {IsSourceAnArray = true};
 
-            foreach (IResource resourceItem in resourceList)
+            foreach (var resourceItem in resourceList)
             {
                 embeddedResource.Resources.Add(resourceItem);
 
@@ -190,8 +253,8 @@ namespace WebApi.Hal
         {
             // We need reflection here, because appenders are of type IHypermediaAppender<T> whilst we define this logic in the base class of T
 
-            MethodInfo methodInfo = type.GetMethod("Append", BindingFlags.FlattenHierarchy | BindingFlags.Static | BindingFlags.NonPublic);
-            MethodInfo genericMethod = methodInfo.MakeGenericMethod(type);
+            var methodInfo = type.GetMethod("Append", BindingFlags.FlattenHierarchy | BindingFlags.Static | BindingFlags.NonPublic);
+            var genericMethod = methodInfo.MakeGenericMethod(type);
 
             genericMethod.Invoke(this, new object[] {this, resolver});
         }
@@ -200,8 +263,8 @@ namespace WebApi.Hal
         {
             var typed = resource as T;
 
-            IHypermediaAppender<T> appender = resolver.ResolveAppender(typed);
-            List<Link> configured = resolver.ResolveLinks(typed).ToList();
+            var appender = resolver.ResolveAppender(typed);
+            var configured = resolver.ResolveLinks(typed).ToList();
 
             configured.Insert(0, resolver.ResolveSelf(typed));
 
@@ -222,8 +285,103 @@ namespace WebApi.Hal
                 links.Insert(0, new Link {Rel = "self", Href = Href});
         }
 
-        protected internal virtual void CreateHypermedia()
+        protected virtual void CreateHypermedia()
         {
+        }
+
+        internal static class HttpStatusDescription
+        {
+            static readonly string[][] httpStatusDescriptions = new string[6][]
+            {
+                null,
+                new string[3]
+                {
+                    "Continue",
+                    "Switching Protocols",
+                    "Processing"
+                },
+                new string[8]
+                {
+                    "OK",
+                    "Created",
+                    "Accepted",
+                    "Non-Authoritative Information",
+                    "No Content",
+                    "Reset Content",
+                    "Partial Content",
+                    "Multi-Status"
+                },
+                new string[8]
+                {
+                    "Multiple Choices",
+                    "Moved Permanently",
+                    "Found",
+                    "See Other",
+                    "Not Modified",
+                    "Use Proxy",
+                    null,
+                    "Temporary Redirect"
+                },
+                new string[27]
+                {
+                    "Bad Request",
+                    "Unauthorized",
+                    "Payment Required",
+                    "Forbidden",
+                    "Not Found",
+                    "Method Not Allowed",
+                    "Not Acceptable",
+                    "Proxy Authentication Required",
+                    "Request Timeout",
+                    "Conflict",
+                    "Gone",
+                    "Length Required",
+                    "Precondition Failed",
+                    "Request Entity Too Large",
+                    "Request-Uri Too Long",
+                    "Unsupported Media Type",
+                    "Requested Range Not Satisfiable",
+                    "Expectation Failed",
+                    null,
+                    null,
+                    null,
+                    null,
+                    "Unprocessable Entity",
+                    "Locked",
+                    "Failed Dependency",
+                    null,
+                    "Upgrade Required"
+                },
+                new string[8]
+                {
+                    "Internal Server Error",
+                    "Not Implemented",
+                    "Bad Gateway",
+                    "Service Unavailable",
+                    "Gateway Timeout",
+                    "Http Version Not Supported",
+                    null,
+                    "Insufficient Storage"
+                }
+            };
+
+            [TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+            internal static string Get(HttpStatusCode code)
+            {
+                return Get((int) code);
+            }
+
+            internal static string Get(int code)
+            {
+                if (code >= 100 && code < 600)
+                {
+                    var index1 = code/100;
+                    var index2 = code%100;
+                    if (index2 < httpStatusDescriptions[index1].Length)
+                        return httpStatusDescriptions[index1][index2];
+                }
+                return null;
+            }
         }
     }
 }

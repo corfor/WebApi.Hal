@@ -8,12 +8,17 @@ namespace WebApi.Hal.JsonConverters
 {
     public class LinksConverter : JsonConverter
     {
+        public override bool CanRead
+        {
+            get { return false; }
+        }
+
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            var links = new HashSet<Link>((IList<Link>)value, Link.EqualityComparer);
-            var lookup = links.ToLookup(l => l.Rel);
-            
-            if (lookup.Count == 0) 
+            var links = new HashSet<Link>((IList<Link>) value, Link.EqualityComparer);
+            var lookup = links.Where(l => l != null).ToLookup(l => l.Rel);
+
+            if (lookup.Count == 0)
                 return;
 
             writer.WriteStartObject();
@@ -23,7 +28,7 @@ namespace WebApi.Hal.JsonConverters
                 var count = rel.Count();
 
                 writer.WritePropertyName(rel.Key);
-                
+
                 if ((count > 1) || (rel.Key == Link.RelForCuries))
                     writer.WriteStartArray();
 
@@ -78,11 +83,6 @@ namespace WebApi.Hal.JsonConverters
             writer.WriteEndObject();
         }
 
-        public override bool CanRead
-        {
-            get { return false; }
-        }
-
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             return reader.Value;
@@ -90,7 +90,7 @@ namespace WebApi.Hal.JsonConverters
 
         public override bool CanConvert(Type objectType)
         {
-            return typeof(IList<Link>).IsAssignableFrom(objectType);
+            return typeof (IList<Link>).IsAssignableFrom(objectType);
         }
 
         public string ResolveUri(string href)

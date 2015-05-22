@@ -3,7 +3,7 @@ using WebApi.Hal.Interfaces;
 
 namespace WebApi.Hal
 {
-    internal class EmbeddedResource
+    class EmbeddedResource
     {
         public EmbeddedResource()
         {
